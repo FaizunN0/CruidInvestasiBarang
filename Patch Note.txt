@@ -137,3 +137,6 @@ eh ternyata jadi
 -Super Admin, Admin, dan User punya pengalaman berbeda sesuai role.
 -Semua route sudah sinkron, tidak ada lagi error Route not defined.
 -Versi 4.2 dianggap sebagai release stabil aplikasi CruidInventarisBarang.
+
+🟢 v4.2.1 — perbaikan bug
+- perbaikan bug
