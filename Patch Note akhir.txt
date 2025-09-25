@@ -1,0 +1,453 @@
+📘 Dokumentasi Sistem CruidInventarisBarang
+
+Versi 0.01 – 4.2
+(Laporan Fitur, Bug, dan Penyelesaian)
+
+📌 Pendahuluan
+
+Sistem CruidInventarisBarang adalah aplikasi berbasis web dengan framework Laravel yang dirancang untuk mengelola inventaris barang secara terpusat dengan kontrol hak akses berbasis role. Ada tiga jenis role utama: Super Admin, Admin, dan User, dengan tingkatan kewenangan berbeda.
+Sistem ini berkembang secara bertahap dari versi 0.01 sampai 4.2 dengan berbagai perubahan fitur, desain antarmuka, perbaikan bug, serta peningkatan mekanisme keamanan.
+
+Tujuan dokumentasi ini adalah mencatat fitur, bug, penyelesaian, dan alasan teknis perubahan yang dilakukan dalam setiap versi. Dokumen ini bisa digunakan sebagai arsip pengembangan sekaligus referensi untuk pengembang berikutnya.
+
+📌 Versi 0.01 — Rilis Awal (Prototype)
+Deskripsi
+
+Rilis pertama aplikasi dengan fitur login sederhana, tanpa pembagian role.
+
+User dapat menambahkan barang dengan field dasar: kode_barang, nama_barang, jumlah, lokasi.
+
+Tampilan masih default Laravel Blade, belum ada styling khusus.
+
+Fitur Utama
+
+Login form dengan username dan password.
+
+CRUD barang dasar tanpa validasi lengkap.
+
+Tampilan tabel menggunakan HTML biasa (belum ada DataTables).
+
+Tidak ada filter barang.
+
+Tidak ada role management.
+
+Tidak ada validasi SweetAlert, hanya notifikasi bootstrap biasa.
+
+Super Admin hardcode di database tanpa seeder.
+
+Logout dengan link GET (kurang aman).
+
+Dashboard hanya teks "Selamat Datang".
+
+Tidak ada middleware otorisasi.
+
+Bug Ditemukan
+
+User bisa akses halaman tanpa login.
+
+Tidak ada validasi → input kosong menyebabkan error SQL.
+
+Password tidak di-hash.
+
+Desain tabel tidak rapi.
+
+Barang tidak terhubung dengan user.
+
+Login gagal tidak ada pesan error.
+
+Logout bisa dilakukan via GET (rawan CSRF).
+
+User bisa akses dashboard tanpa login.
+
+Migrasi database kurang lengkap.
+
+Tidak ada pembagian akses antar role.
+
+Penyelesaian
+
+Menambahkan middleware auth.
+
+Menggunakan hashing bcrypt.
+
+Menambahkan field user_id pada barang.
+
+Mulai memikirkan desain dengan Bootstrap.
+
+Membuat route POST untuk logout.
+
+Menambahkan validasi minimal di form barang.
+
+Mulai membuat rencana role-based access.
+
+📌 Versi 1.0 — Implementasi Role Dasar
+Deskripsi
+
+Mulai membedakan Super Admin, Admin, dan User.
+
+Super Admin bisa melihat semua barang.
+
+Admin bisa melihat barang user tertentu.
+
+User hanya bisa melihat barang miliknya sendiri.
+
+Fitur Baru
+
+Model User diperluas dengan field role.
+
+Super Admin role ditambahkan.
+
+Admin bisa melihat daftar barang semua user.
+
+User hanya bisa CRUD barangnya sendiri.
+
+Dashboard sederhana dengan info role login.
+
+Seeder untuk Super Admin default.
+
+Middleware role dibuat.
+
+Validasi input ditambahkan.
+
+Tabel barang ditampilkan dengan Bootstrap Table.
+
+Route dipisahkan berdasarkan role.
+
+Bug
+
+User tetap bisa akses route admin dengan mengetik URL.
+
+Admin tidak bisa membatasi hak user.
+
+Error mass assignment saat tambah akun.
+
+Validasi form masih lemah.
+
+Super Admin tidak bisa hapus barang user lain.
+
+Navbar tampil untuk semua role (membingungkan).
+
+Seeder kadang tidak terbuat.
+
+Logout tidak aman.
+
+Dashboard terlalu polos.
+
+Tabel masih statis.
+
+Penyelesaian
+
+Middleware role diperbaiki untuk filtering akses.
+
+Tambahkan policy Laravel untuk barang.
+
+Buat navbar dinamis sesuai role.
+
+Tambah SweetAlert untuk feedback CRUD.
+
+Gunakan DataTables untuk tabel interaktif.
+
+Tambah permission JSON sederhana di user.
+
+Ubah validasi login agar error jelas.
+
+Tambahkan route group untuk admin dan super admin.
+
+Seeder super admin dipastikan hash password.
+
+Dashboard mulai didesain dengan card Bootstrap.
+
+📌 Versi 2.0 — Permission System
+Deskripsi
+
+Permission ditambahkan agar admin/super admin bisa mengatur akses user.
+
+User bisa diberikan izin khusus: tambah, edit, hapus.
+
+Permission awal disimpan sebagai JSON.
+
+Fitur Baru
+
+Permission create, update, delete.
+
+Halaman manajemen permission untuk admin.
+
+Super Admin bisa tambah akun user.
+
+Validasi CRUD barang diperketat.
+
+SweetAlert digunakan untuk konfirmasi hapus.
+
+Tabel barang pakai DataTables.
+
+Dashboard tampil jumlah barang total.
+
+Navbar dinamis per role.
+
+Filter barang global untuk admin.
+
+Seeder permission awal dibuat.
+
+Bug
+
+implode() error karena permission masih string.
+
+User tetap bisa akses aksi meski tidak punya izin.
+
+DataTables error reinitialisation.
+
+Admin bisa ubah permission super admin.
+
+Edit akun tidak tampil data lama.
+
+Validasi password kurang aman.
+
+Route admin.accounts.edit tidak ada.
+
+Permission JSON sulit digunakan.
+
+Barang user bisa dihapus admin tanpa izin.
+
+Dashboard tidak sinkron data.
+
+Penyelesaian
+
+Ubah permission jadi relasi pivot user_permission.
+
+Tambah method hasPermission() di model User.
+
+Batasi admin hanya bisa ubah user role.
+
+DataTables pakai destroy:true.
+
+Route group admin/accounts ditambahkan.
+
+Edit akun otomatis tampil data lama.
+
+Validasi password minimal 8 karakter.
+
+Seeder permission dibuat otomatis.
+
+SweetAlert validasi input kosong.
+
+Dashboard ambil data langsung dari DB.
+
+📌 Versi 3.0 — Penyempurnaan UI/UX
+Deskripsi
+
+Fokus pada desain UI dengan SweetAlert2, DataTables, Bootstrap Icons.
+
+Navbar diberi gradient, tabel diberi warna alternating.
+
+Fitur Baru
+
+Desain layout konsisten (navbar gradient, card, shadow).
+
+SweetAlert2 untuk semua pesan sukses/error.
+
+DataTables dengan search dan paginate.
+
+Validasi error tetap mempertahankan input lama.
+
+Admin bisa filter barang berdasarkan user.
+
+Super Admin bisa sudo tambah barang user lain.
+
+Dashboard punya chart statistik barang.
+
+Daftar Barang dipisahkan dari Barang User.
+
+RoleMiddleware lebih rapi.
+
+Navbar responsif di HP dan tablet.
+
+Bug
+
+Navbar terlalu besar.
+
+Daftar Barang dan Barang User mirip.
+
+Super Admin tidak bisa sudo.
+
+Filter user memakan tempat.
+
+Tombol aksi hilang meski punya izin.
+
+SweetAlert tidak muncul di beberapa aksi.
+
+Data kosong menyebabkan error insert.
+
+Seeder tidak jalan untuk permission.
+
+Logout button kadang error di mobile.
+
+Dashboard tidak animatif.
+
+Penyelesaian
+
+Navbar padding seragam dengan CSS.
+
+Daftar Barang dipisah view khusus.
+
+Super Admin bisa pilih user_id di form barang.
+
+Filter user pakai multiple select.
+
+Tombol aksi cek hasPermission().
+
+SweetAlert2 dipanggil di semua session.
+
+Tambah validasi di controller.
+
+Seeder permission otomatis insertOrIgnore.
+
+Logout form pakai button di navbar.
+
+Dashboard pakai animasi fadeIn dan chart gradient.
+
+📌 Versi 4.0 — Optimalisasi Fitur
+Deskripsi
+
+Penyempurnaan sistem agar tidak ada bug besar.
+
+UI konsisten dengan tema ungu-pink-biru.
+
+Mekanisme filter diperbaiki dengan select multiple.
+
+Fitur Baru
+
+Super Admin bisa atur semua akun, permission, barang.
+
+Admin hanya bisa atur user role dan barang user.
+
+User hanya bisa CRUD barangnya sendiri.
+
+SweetAlert untuk semua validasi input.
+
+DataTables global di semua tabel.
+
+Dashboard modern dengan Chart.js.
+
+Sudo barang untuk Super Admin.
+
+Filter daftar barang lebih ringkas.
+
+Konfirmasi hapus dengan SweetAlert.
+
+Session error/success langsung popup.
+
+Bug
+
+User tetap bisa edit barang di daftar barang.
+
+Permission tidak langsung aktif.
+
+Filter user tidak jalan.
+
+Edit akun error $user undefined.
+
+Route duplikat di web.php.
+
+Navbar kadang overflow.
+
+Dashboard kurang sinkron data.
+
+Admin bisa buka akun super admin.
+
+Seeder gagal di deploy.
+
+DataTables kadang warning.
+
+Penyelesaian
+
+Tambah policy barang untuk izin aksi.
+
+Refresh permission setelah update.
+
+Query filter pakai whereIn.
+
+Edit akun ganti $account jadi $user.
+
+Web.php dibersihkan route duplikat.
+
+Navbar CSS diperbaiki.
+
+Dashboard pakai controller khusus.
+
+Admin dibatasi tidak bisa buka super admin.
+
+Seeder dijalankan manual.
+
+DataTables pakai destroy:true.
+
+📌 Versi 4.2 — Stabil & Finalisasi
+Deskripsi
+
+Versi stabil dengan sistem permission, role, filter, dashboard, dan UI konsisten.
+
+Semua modul sudah terintegrasi.
+
+Fitur Baru
+
+Dashboard interaktif dengan card + chart.
+
+Daftar Barang dengan filter user & lokasi.
+
+Super Admin bisa sudo barang user.
+
+Admin bisa atur permission user.
+
+User hanya CRUD barang sendiri.
+
+DataTables + SweetAlert di semua web.
+
+Validasi error tidak menghapus input.
+
+Konfirmasi hapus interaktif.
+
+Navbar konsisten.
+
+Layout responsif dan tematik.
+
+Bug
+
+hasAnyPermission undefined.
+
+User bisa akses aksi tanpa izin.
+
+Undefined $users di super admin barang.
+
+Daftar barang filter error.
+
+Dashboard data tidak lengkap.
+
+Aksi tidak muncul meski ada izin.
+
+Filter memakan tempat.
+
+Navbar ukuran tidak seragam.
+
+Route permission tidak ditemukan.
+
+Pivot table permission tidak ada.
+
+Penyelesaian
+
+Tambah helper hasAnyPermission.
+
+Policy barang dipakai.
+
+Query $users = User::all() untuk super admin.
+
+Filter diperbaiki dengan multiple select.
+
+Dashboard ambil data real-time.
+
+Aksi cek hasPermission().
+
+Filter disederhanakan dengan collapse panel.
+
+Navbar padding konsisten.
+
+Tambah route admin.users.permissions.edit.
+
+Migrasi pivot table user_permission dibuat.

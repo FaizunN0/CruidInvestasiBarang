@@ -1,121 +1,88 @@
-  {{-- jika ada yang salah atau eror atau yang lain maka iti fitur bukan bug 😅 --}}
+{{-- resources/views/barangs/index.blade.php --}}
 @extends('layouts.app')
 
 @section('content')
-  <h2 class="text-white mb-3">📦 Data Barang</h2>
+<div class="card shadow-lg">
+  <div class="card-header d-flex justify-content-between align-items-center">
+    <div class="d-flex align-items-center gap-3">
+      <h5 class="mb-0"><i class="bi bi-box-seam me-2"></i> Barang Saya</h5>
 
-  <!-- Controls: Tombol Tambah + Search placeholder -->
-  <div class="table-controls">
-    <a href="{{ route('barangs.create') }}" class="btn btn-primary">
-      ➕ Tambah Barang
-    </a>
-    <div id="dt-search-placeholder"></div>
+      {{-- Super: pilih acting user (sudo view) --}}
+      @if(isset($users) && $users->isNotEmpty())
+        <form method="GET" class="d-flex align-items-center" style="gap:.5rem;">
+          <label class="mb-0 text-muted small">Tindakan sebagai</label>
+          <select name="as_user" class="form-select form-select-sm" onchange="this.form.submit()">
+            <option value="">— Semua (No Acting) —</option>
+            @foreach($users as $u)
+              <option value="{{ $u->id }}" {{ (isset($actingUser) && $actingUser && $actingUser->id == $u->id) ? 'selected' : '' }}>
+                {{ $u->name }} ({{ ucfirst($u->role) }})
+              </option>
+            @endforeach
+          </select>
+        </form>
+      @endif
+    </div>
+
+    <div>
+      @if(auth()->user()->isSuper() || auth()->user()->hasPermission('create'))
+        {{-- jika actingUser ada, tambahkan query string agar create preselect owner --}}
+        <a href="{{ route('barang.create') }}{{ isset($actingUser) && $actingUser ? '?as_user='.$actingUser->id : '' }}" class="btn btn-primary btn-sm">
+          <i class="bi bi-plus-lg"></i> Tambah Barang
+        </a>
+      @endif
+    </div>
   </div>
 
-  <!-- Tabel sing bisa munggah mudhun -->
-  <div class="table-wrapper">
-    <table id="myTable" class="table table-hover mb-0" style="width:100%">
-      <thead>
-        <tr>
-          <th>Kode Barang</th>
-          <th>Nama Barang</th>
-          <th>Jumlah</th>
-          <th>Satuan</th>
-          <th>Lokasi</th>
-          <th class="text-center">Aksi</th>
-        </tr>
-      </thead>
-      <tbody>
-        @foreach($barangs as $b)
+  <div class="card-body">
+    <div class="table-wrapper">
+      <table id="myBarangTable" class="table table-striped datatable">
+        <thead>
+          <tr>
+            <th>Kode</th>
+            <th>Nama</th>
+            <th>Jumlah</th>
+            <th>Satuan</th>
+            <th>Lokasi</th>
+            <th>Pemilik</th>
+            <th>Aksi</th>
+          </tr>
+        </thead>
+        <tbody>
+          @foreach($barangs as $b)
           <tr>
             <td>{{ $b->kode_barang }}</td>
             <td>{{ $b->nama_barang }}</td>
             <td>{{ $b->jumlah }}</td>
             <td>{{ $b->satuan }}</td>
             <td>{{ $b->lokasi }}</td>
-            <td class="text-center">
-              <a href="{{ route('barangs.edit', $b) }}" class="btn btn-warning btn-sm me-1">✏️</a>
-              <button type="button" class="btn btn-danger btn-sm btn-delete"
-                      data-id="{{ $b->id }}" data-name="{{ $b->nama_barang }}">🗑️</button>
-              <form id="delete-form-{{ $b->id }}" action="{{ route('barangs.destroy', $b) }}" method="POST" class="d-none">
-                @csrf @method('DELETE')
-              </form>
+            <td>{{ $b->user->name ?? '-' }}</td>
+            <td>
+              {{-- Edit --}}
+              @if(
+                auth()->user()->isSuper() ||
+                (auth()->user()->isAdmin() && auth()->user()->hasPermission('update')) ||
+                (auth()->user()->hasPermission('update') && $b->user_id == auth()->id())
+              )
+                <a href="{{ route('barang.edit', $b) }}" class="btn btn-warning btn-sm"><i class="bi bi-pencil"></i></a>
+              @endif
+
+              {{-- Delete --}}
+              @if(
+                auth()->user()->isSuper() ||
+                (auth()->user()->isAdmin() && auth()->user()->hasPermission('delete')) ||
+                (auth()->user()->hasPermission('delete') && $b->user_id == auth()->id())
+              )
+                <form action="{{ route('barang.destroy', $b) }}" method="POST" class="d-inline">
+                  @csrf @method('DELETE')
+                  <button type="button" class="btn btn-danger btn-sm btn-delete"><i class="bi bi-trash"></i></button>
+                </form>
+              @endif
             </td>
           </tr>
-        @endforeach
-      </tbody>
-    </table>
+          @endforeach
+        </tbody>
+      </table>
+    </div>
   </div>
-
-  <!-- Pagination container -->
-  <div class="pagination-wrapper"></div>
+</div>
 @endsection
-
-@push('scripts')
-<script>
-  $(function() {
-    // Ngetung dawa kaca miturut jembar layar
-    const w = $(window).width();
-    let pageLength = 7;
-    if (w <= 576)       pageLength = 5;
-    else if (w <= 768)  pageLength = 6;
-    else if (w <= 1024) pageLength = 17;
-
-    // Inisialisasi DataTable: 'f' kanggo filter, 't' kanggo tabel, 'p' kanggo nomer-nomeran
-    const table = $('#myTable').DataTable({
-      pageLength:   pageLength,
-      lengthChange: false,
-      ordering:     true,
-      info:         false,
-      autoWidth:    false,
-      dom:          'f t <"pagination-wrapper"p>',
-      language: {
-        search: "",
-        searchPlaceholder: "🔍 Cari...",
-        paginate: {
-          previous: "‹",
-          next:     "›"
-        }
-      }
-    });
-
-    // Pindahkan search input ke placeholder di controls
-    $('#dt-search-placeholder').append( $('.dataTables_filter') );
-
-    // Konfirmasi delete
-    $('.btn-delete').on('click', function() {
-      const id   = $(this).data('id'),
-            name = $(this).data('name');
-      Swal.fire({
-        title: `Hapus “${name}”?`,
-        text: 'Data akan dihapus permanen.',
-        icon: 'warning',
-        showCancelButton: true,
-        confirmButtonText: 'Ya, hapus!',
-        cancelButtonText: 'Batal',
-        customClass: {
-          confirmButton: 'btn btn-danger me-2',
-          cancelButton:  'btn btn-secondary'
-        },
-        buttonsStyling: false
-      }).then(res => {
-        if (res.isConfirmed) {
-          $('#delete-form-' + id).submit();
-        }
-      });
-    });
-
-    // Flash sukses
-    @if(session('success'))
-      Swal.fire({
-        title: 'Berhasil!',
-        text: "{{ session('success') }}",
-        icon: 'success',
-        confirmButtonText: 'Oke',
-        customClass: { confirmButton: 'btn btn-primary' },
-        buttonsStyling: false
-      });
-    @endif
-  });
-</script>
-@endpush

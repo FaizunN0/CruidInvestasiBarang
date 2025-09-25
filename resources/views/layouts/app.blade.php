@@ -1,202 +1,145 @@
-<!DOCTYPE html>
-<html lang="en">
-  {{-- jika ada yang salah atau eror atau yang lain maka iti fitur bukan bug 😅 --}}
-
+<!doctype html>
+<html>
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>CruidInvestasiBarang</title>
-
-    {{--  Fonts family Poppins  --}}
-    <link href="https://fonts.gofamiogleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
-    {{-- boostrap 5 --}}
+    <meta charset="utf-8">
+    <title>CruidInventarisBarang</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    {{-- data tabel --}}
     <link href="https://cdn.datatables.net/1.13.4/css/dataTables.bootstrap5.min.css" rel="stylesheet">
-    {{-- SweetAlert2 ben koyo web pemerintah --}}
     <link href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css" rel="stylesheet">
-    {{-- Bootstrap Icons sing gratis gratis ae --}}
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
 
     <style>
         body {
-            /* lah ? */
             font-family: 'Poppins', sans-serif;
-            /* ??? */
             background: linear-gradient(135deg, #7f00ff 0%, #e100ff 50%, #00c6ff 100%);
             color: #2b2b2b;
-            padding: 2rem 0;
             min-height: 100vh;
+            margin: 0;
+            padding-top: 56px; /* sesuai tinggi navbar */
         }
 
-        /* Controls wrapper */
-        .table-controls {
-            display: flex;
-            flex-wrap: wrap;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 1rem;
-            gap: 0.75rem;
+        /* Navbar custom */
+        .custom-navbar {
+            background: linear-gradient(135deg, #7f00ff, #e100ff, #00c6ff);
+            padding: 0.5rem 1rem;   /* lebih ramping */
+            min-height: 56px;       /* default tinggi bootstrap */
         }
-
-        .table-controls .dataTables_filter {
-            margin: 0 !important;
-        }
-
-        .table-controls .dataTables_filter input {
-            border: 2px solid #e6d5ff;
-            border-radius: 0.5rem;
-            padding: 0.375rem 0.75rem;
-            min-width: 150px;
-        }
-
-        /* Scroll wrapper nggo tabel */
-        .table-wrapper {
-            overflow-x: auto;
-            border-radius: 0.75rem;
-            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
-            margin-bottom: 1rem;
-        }
-
-        /* werno scrool cedak datatabel ning ngesor */
-        .table-wrapper::-webkit-scrollbar {
-            height: 8px;
-        }
-
-        .table-wrapper::-webkit-scrollbar-track {
-            background: rgba(225, 0, 255, 0.2);
-            border-radius: 4px;
-        }
-
-        .table-wrapper::-webkit-scrollbar-thumb {
-            background: #e100ff;
-            border-radius: 4px;
-        }
-
-        .table-wrapper {
-            scrollbar-width: thin;
-            scrollbar-color: #e100ff rgba(225, 0, 255, 0.2);
-        }
-
-        /* Table styling */
-        table.dataTable thead {
-            background: #fff;
-        }
-
-        table.dataTable thead th {
-            color: #222 !important;
+        .custom-navbar .navbar-brand {
+            font-size: 1rem;
             font-weight: 600;
-            text-transform: uppercase;
-            font-size: 0.85rem;
-            border: 1px solid #ddd;
-            background: #fff;
-            padding: 0.75rem;
-        }
-
-        table.dataTable tbody td {
-            border: 1px solid #eee;
-            padding: 0.75rem;
-        }
-
-        table.dataTable tbody tr:nth-child(odd) {
-            background: #fff;
-        }
-
-        table.dataTable tbody tr:nth-child(even) {
-            background: #fef7ff;
-        }
-
-        table.dataTable tbody tr:hover {
-            background: #ffe6fc !important;
-        }
-
-        /* Pagination styling sing prev/next karo nomor halaman */
-        .dataTables_wrapper .dataTables_paginate {
-            display: flex !important;
-            justify-content: center !important;
-            align-items: center;
-            gap: 0.5rem;
-            margin-top: 1rem;
-            position: relative;
-            z-index: 10;
-        }
-
-        .dataTables_wrapper .dataTables_paginate .paginate_button {
-            background: #ffffffcc;
-            color: #7f00ff !important;
-            border: 2px solid #7f00ff;
-            border-radius: 0.5rem;
-            padding: 0.5em 0.75em;
-            min-width: 2.5em;
-            font-weight: 600;
-            transition: all 0.15s;
-            cursor: pointer;
-        }
-
-        .dataTables_wrapper .dataTables_paginate .paginate_button:hover,
-        .dataTables_wrapper .dataTables_paginate .paginate_button.current {
-            background: linear-gradient(135deg, #7f00ff, #e100ff);
             color: #fff !important;
-            border-color: transparent;
-            transform: translateY(-1px) scale(1.05);
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+        }
+        .custom-navbar .nav-link,
+        .custom-navbar .btn-link {
+            font-size: 0.95rem;
+            padding: 0.5rem 0.75rem;
+            color: #fff !important;
+            font-weight: 500;
+            transition: color 0.2s;
+        }
+        .custom-navbar .nav-link:hover,
+        .custom-navbar .btn-link:hover {
+            color: #ffe6fc !important;
+        }
+        .navbar-toggler {
+            border: none;
+            font-size: 1.25rem;
+        }
+        .navbar-toggler:focus {
+            box-shadow: none;
         }
 
-        .dataTables_wrapper .dataTables_paginate .paginate_button.disabled {
-            opacity: 0.4;
-            cursor: default;
+        /* Animasi fade */
+        .container { animation: fadeIn 0.6s ease-in-out; }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
         }
 
-        /* Buttons & forms */
-        .btn-primary {
-            background: #e100ff;
-            border-color: #e100ff;
-        }
-
-        .btn-primary:hover {
-            background: #cc00dd;
-            border-color: #cc00dd;
-        }
-
-        .btn-warning {
-            background: #ffb300;
-            border-color: #ffb300;
-            color: #fff;
-        }
-
-        .btn-danger {
-            background: #ff4d4d;
-            border-color: #ff4d4d;
-            color: #fff;
-        }
-
-        .form-control:focus {
-            border-color: #e100ff;
-            box-shadow: 0 0 0 0.2rem rgba(225, 0, 255, 0.2);
-        }
-
-        .swal2-popup {
-            border-radius: 1rem;
-            font-family: 'Poppins', sans-serif;
+        /* DataTables */
+        table.dataTable thead th {
+            background: #fff;
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            font-weight: 600;
         }
     </style>
 </head>
-
 <body>
-    <div class="container">
-        @yield('content')
+<nav class="navbar navbar-expand-lg custom-navbar fixed-top">
+  <div class="container-fluid">
+    <a class="navbar-brand" href="{{ route('dashboard') }}">CruidInventaris</a>
+    <button class="navbar-toggler text-white" type="button" data-bs-toggle="collapse" data-bs-target="#navbarContent">
+      <span class="navbar-toggler-icon"><i class="bi bi-list text-white"></i></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarContent">
+      @auth
+      <ul class="navbar-nav ms-auto">
+        <li class="nav-item"><a class="nav-link" href="{{ route('barang.index') }}">Barang</a></li>
+        @if(auth()->user()->isSuper())
+          <li class="nav-item"><a class="nav-link" href="{{ route('admin.accounts.index') }}">Manage Accounts</a></li>
+        @endif
+        @if(auth()->user()->isSuper() || auth()->user()->isAdmin())
+          <li class="nav-item"><a class="nav-link" href="{{ route('admin.permissions.index') }}">Manajemen Permissions</a></li>
+        @endif
+        <li class="nav-item"><a class="nav-link" href="{{ route('barang.daftar') }}">Daftar Barang</a></li>
+        <li class="nav-item">
+          <form method="POST" action="{{ route('logout') }}">
+            @csrf
+            <button class="btn btn-link nav-link">Logout ({{ auth()->user()->name }})</button>
+          </form>
+        </li>
+      </ul>
+      @endauth
     </div>
+  </div>
+</nav>
 
-    {{-- jquery --}}
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    {{-- boostrap 5 --}}
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    {{-- datatabel --}}
-    <script src="https://cdn.datatables.net/1.13.4/js/jquery.dataTables.min.js"></script>
-    <script src="https://cdn.datatables.net/1.13.4/js/dataTables.bootstrap5.min.js"></script>
-    {{-- swweetalert2 --}}
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-    @stack('scripts')
+<div class="container mt-4">
+  @yield('content')
+</div>
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdn.datatables.net/1.13.4/js/jquery.dataTables.min.js"></script>
+<script src="https://cdn.datatables.net/1.13.4/js/dataTables.bootstrap5.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+<script>
+    // SweetAlert2 untuk session flash
+    @if(session('success'))
+      Swal.fire({ icon:'success', title:'Berhasil', text:"{{ session('success') }}", timer:2000, showConfirmButton:false });
+    @endif
+    @if(session('error'))
+      Swal.fire({ icon:'error', title:'Oops!', text:"{{ session('error') }}" });
+    @endif
+
+    // DataTables global
+    $(function(){
+      $('table.datatable').DataTable({
+        responsive:true,
+        pageLength:7,
+        language:{
+          search:"🔍 Cari:", lengthMenu:"Tampilkan _MENU_ data",
+          zeroRecords:"Tidak ada data ditemukan",
+          info:"Menampilkan _START_ - _END_ dari _TOTAL_ data",
+          paginate:{previous:"‹", next:"›"}
+        }
+      });
+    });
+
+    // Konfirmasi delete
+    $(document).on('click','.btn-delete',function(){
+      let form=$(this).closest('form');
+      Swal.fire({
+        title:'Yakin hapus?', text:'Data yang dihapus tidak bisa dikembalikan!',
+        icon:'warning', showCancelButton:true,
+        confirmButtonColor:'#e100ff', cancelButtonColor:'#aaa',
+        confirmButtonText:'Ya, hapus', cancelButtonText:'Batal'
+      }).then((result)=>{ if(result.isConfirmed){ form.submit(); } });
+    });
+</script>
+@stack('scripts')
 </body>
-
 </html>

@@ -1,0 +1,139 @@
+ndak jadi 
+
+
+eh ternyata jadi
+
+📌 Patch Notes CruidInventarisBarang
+🟢 v0.01 — Inisialisasi Proyek
+
+-Proyek Laravel pertama kali dibuat menggunakan Laravel versi terbaru saat itu.
+-File konfigurasi .env disiapkan agar koneksi ke MySQL bisa berjalan lancar.
+-Struktur folder standar Laravel otomatis terbentuk: app/, routes/, resources/, database/, dan lain-lain.
+-Model Barang dibuat sebagai model pertama untuk menampung data inventaris.
+-Migration create_barangs_table dibuat untuk mendefinisikan kolom barang seperti kode_barang, nama_barang, jumlah, satuan, dan lokasi.
+-Seeder sederhana untuk testing dibuat agar data barang awal bisa diisi otomatis.
+-File route web.php masih kosong hanya dengan route welcome bawaan Laravel.
+-View bawaan Laravel welcome.blade.php masih dipakai untuk testing server.
+-Aplikasi diuji pertama kali dengan php artisan serve untuk memastikan environment sudah benar.
+-Kesimpulannya, versi ini hanya pondasi awal, tapi sudah siap dikembangkan ke fitur CRUD.
+
+🟢 v0.1 — CRUD Barang Dasar
+-Pada versi ini, CRUD (Create, Read, Update, Delete) untuk Barang mulai dibuat.
+-Controller BarangController ditambahkan dengan fungsi index, create, store, edit, update, dan destroy.
+-Route Route::resource('barang', BarangController::class) ditambahkan agar CRUD bisa diakses.
+-View sederhana dibuat: barangs/index.blade.php, barangs/create.blade.php, barangs/edit.blade.php.
+-Tampilan masih polos menggunakan HTML biasa dengan sedikit CSS.
+-Belum ada sistem login, sehingga semua orang bisa akses CRUD barang.
+-Validasi form dasar menggunakan request()->validate() ditambahkan agar data barang tidak kosong.
+-Data barang berhasil tersimpan di database dengan command php artisan migrate:fresh --seed.
+-Uji coba CRUD berjalan lancar di browser (tambah/edit/hapus barang berfungsi).
+-Kesimpulannya, aplikasi sudah bisa digunakan meski masih sederhana dan belum ada keamanan.
+
+🟢 v0.5 — Sistem Login & Role Dasar
+
+-AuthController ditambahkan untuk mengatur login, logout, dan tampilan form login.
+-Halaman login dibuat di resources/views/auth/login.blade.php.
+-Middleware auth mulai diterapkan pada route CRUD barang agar tidak bisa diakses sembarang orang.
+-Tiga role utama diperkenalkan: super, admin, dan user.
+-Kolom role ditambahkan pada tabel users melalui migration baru.
+-Seeder SuperAdminSeeder dibuat untuk membuat akun super admin default.
+-Login menggunakan email & password Laravel default hashing (bcrypt).
+-Logout berhasil dibuat dengan form POST /logout.
+-Route root / diarahkan ke login jika belum autentikasi.
+-Versi ini merupakan langkah penting karena sistem keamanan mulai ada.
+
+🟢 v1.0 — Fitur Super Admin
+-Super Admin kini punya akses penuh ke sistem.
+-Super Admin bisa membuat akun baru untuk admin maupun user.
+-Fitur hapus akun admin & user juga ditambahkan, khusus untuk super admin.
+-Validasi pada pembuatan akun diperbaiki agar email unik.
+-Tampilan Manage Accounts (admin/accounts/index.blade.php) dibuat sederhana.
+-Middleware role:super ditambahkan agar hanya super admin bisa akses halaman akun.
+-User biasa hanya bisa CRUD barang miliknya sendiri.
+-Super admin bisa melihat semua barang dari semua user.
+-Admin sementara hanya sebagai user biasa dengan role berbeda.
+-Versi ini memperkuat struktur peran dalam aplikasi.
+
+🟢 v1.5 — Permission Awal (JSON)
+-Permissions awal ditambahkan ke tabel users dalam bentuk kolom JSON.
+-Permissions meliputi create, update, delete.
+-Super Admin bisa mengatur permission user melalui UI baru.
+-Admin bisa memberikan izin terbatas, tetapi fitur masih setengah matang.
+-Blade menampilkan tombol aksi (edit/hapus) sesuai izin JSON user.
+-Bug muncul: implode(): Argument must be array, string given saat menampilkan izin.
+-Route untuk edit permission user ditambahkan.
+-Middleware role:super,admin dipakai untuk membatasi akses.
+-Validasi izin masih sederhana, belum ada pivot table.
+-Versi ini membuka jalan untuk sistem permission yang lebih baik.
+
+🟢 v2.0 — Migrasi Permission ke SQL Relasi
+-Sistem permission diubah dari JSON → tabel SQL relasional.
+-Dibuat tabel permissions untuk daftar izin (create, update, delete).
+-Dibuat tabel pivot user_permission untuk relasi many-to-many.
+-Seeder default permissions (create, update, delete) ditambahkan.
+-User model ditambahkan relasi permissions().
+-Bug JSON hilang karena sekarang pakai relasi pivot.
+-Admin & Super Admin bisa mengatur permission user di UI.
+-Tombol aksi barang muncul sesuai permission user.
+-Blade diperbaiki agar tidak error ketika permission kosong.
+-Versi ini menyempurnakan sistem otorisasi granular.
+
+🟢 v2.5 — UI Manage Accounts Modern
+-Halaman Manage Accounts diperbarui dengan DataTables.
+-Tabel akun memiliki fitur search, pagination, dan sorting otomatis.
+-SweetAlert2 digunakan untuk notifikasi sukses & error.
+-Konfirmasi hapus akun menggunakan popup SweetAlert2.
+-Tombol aksi (edit, delete, atur izin) diberi ikon Bootstrap.
+-Navbar diperbaiki agar konsisten dan tetap di atas.
+-Semua halaman menggunakan layout baru layouts/app.blade.php.
+-Validasi form tambah/edit akun lebih baik dengan pesan error.
+-Data yang salah diinput tidak hilang (old input ditampilkan kembali).
+-Versi ini fokus pada perbaikan UX & UI.
+
+🟢 v3.0 — Barang Management Lanjutan
+-Super Admin bisa melihat barang semua user sekaligus.
+-Admin bisa memilih filter barang: tampilkan semua user atau user tertentu.
+-User hanya bisa melihat barang miliknya sendiri.
+-Super Admin bisa edit/hapus barang milik user lain.
+-Filter barang dibuat dengan dropdown user.
+-Bug filter memakan banyak tempat di UI.
+-Halaman barang/daftar.blade.php dibuat untuk daftar barang global.
+-Halaman barang/index.blade.php difokuskan hanya untuk barang user sendiri.
+-Route baru barang/daftar ditambahkan.
+-Versi ini memisahkan manajemen barang global dan personal.
+
+🟢 v3.5 — Penyempurnaan UI & Validasi
+-Navbar dibuat lebih menarik dengan gradient & hover effect.
+-Semua tabel pakai DataTables dengan desain konsisten.
+-SweetAlert2 dipakai untuk semua notifikasi, tidak ada lagi alert biasa.
+-Validasi form Laravel ditampilkan via SweetAlert2.
+-Jika input salah (password kurang panjang, email invalid), user diberi peringatan.
+-Data yang sudah diisi tetap tersimpan agar tidak perlu diketik ulang.
+-Tombol aksi (edit, hapus, tambah) muncul sesuai permission.
+-Middleware & Blade directive @can digunakan untuk cek izin.
+-Dashboard mulai dihias dengan card & ikon sederhana.
+-Versi ini meningkatkan UX agar lebih ramah pengguna.
+
+🟢 v4.0 — Dashboard & Integrasi Permissions
+-Dashboard dibuat lebih modern dengan card berisi statistik barang & user.
+-Super Admin bisa masuk ke barang milik user lain (sinkron data).
+-Jika super admin hapus barang user, data terhapus di dua sisi.
+-Filter barang diperbaiki agar tidak memakan banyak tempat.
+-Bug tombol aksi hilang meski permission sudah ada diperbaiki.
+-Manajemen Permissions User diperbaiki agar seragam dengan Manage Accounts.
+-Permissions page pakai DataTables + SweetAlert2.
+-Semua route permission sinkron dengan PSR-4.
+-Seeder permission diperbaiki agar tidak error.
+-Versi ini menghubungkan dashboard, barang, akun, dan permission dengan baik.
+
+🟢 v4.2 — Rilis Stabil
+-Semua fitur utama sudah stabil: CRUD Barang, Manage Accounts, Manage Permissions.
+-Navbar konsisten ukurannya di semua halaman.
+-Semua tabel DataTables punya search, pagination, dan responsive scroll.
+-SweetAlert2 dipakai untuk sukses, error, dan konfirmasi hapus.
+-Tombol aksi sesuai permission muncul otomatis tanpa bug.
+-Validasi form tambah/edit akun & barang sudah sempurna.
+-Dashboard menampilkan informasi penting dengan desain rapi.
+-Super Admin, Admin, dan User punya pengalaman berbeda sesuai role.
+-Semua route sudah sinkron, tidak ada lagi error Route not defined.
+-Versi 4.2 dianggap sebagai release stabil aplikasi CruidInventarisBarang.

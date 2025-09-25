@@ -48,7 +48,7 @@
     <button type="submit" class="btn btn-primary">
         {{ $buttonText }}
     </button>
-    <a href="{{ route('barangs.index') }}" class="btn btn-secondary">
+    <a href="{{ route('barang.index') }}" class="btn btn-secondary">
         ← Batal
     </a>
 </div>
