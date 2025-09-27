@@ -140,3 +140,10 @@ eh ternyata jadi
 
 🟢 v4.2.1 — perbaikan bug
 - perbaikan bug
+- sepertinya ada yang salah pada bagian web daftar barang
+- oh, ternyata saya lupa mematikan kode         
+if ($auth->isUser()) {
+        $query->where('user_id', $auth->id);
+        }
+ penyebab di daftar barang untuk role user yang membuat user tidak bisa melihat daftar barang
+ Grobal(semua data) dan hanya melihat barang user itu sendiri
