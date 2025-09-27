@@ -66,10 +66,10 @@ class BarangController extends Controller
             $query->where('lokasi', 'like', '%' . $request->lokasi . '%');
         }
 
-        // normal user can't view others
-        if ($auth->isUser()) {
-            $query->where('user_id', $auth->id);
-        }
+        // jika kode di bawah ini dihidupkan, user hanya lihat barang milik sendiri
+        // if ($auth->isUser()) {
+        //     $query->where('user_id', $auth->id);
+        // }
 
         $barangs = $query->get();
         $users = User::orderBy('name')->get();
