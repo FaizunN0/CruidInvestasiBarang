@@ -147,3 +147,5 @@ if ($auth->isUser()) {
         }
  penyebab di daftar barang untuk role user yang membuat user tidak bisa melihat daftar barang
  Grobal(semua data) dan hanya melihat barang user itu sendiri
+
+- pada dashbord untuk tampilan Statistik & Aktivitas hanya visual
