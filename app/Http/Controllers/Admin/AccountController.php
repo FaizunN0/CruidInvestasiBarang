@@ -25,7 +25,7 @@ class AccountController extends Controller
         $request->validate([
             'name' => 'required|string|max:100',
             'email'=> 'required|email|unique:users,email',
-            'password' => 'required|string|min:8',
+            'password' => 'required|string|min:6',
             'role' => 'required|in:super,admin,user'
         ]);
 
@@ -50,7 +50,7 @@ class AccountController extends Controller
         $request->validate([
             'name' => 'required|string|max:100',
             'email'=> 'required|email|unique:users,email,'.$user->id,
-            'password' => 'nullable|string|min:7',
+            'password' => 'nullable|string|min:6',
             'role' => 'required|in:super,admin,user'
         ]);
 
